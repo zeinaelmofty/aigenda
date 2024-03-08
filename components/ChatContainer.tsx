@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Input from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useSession } from "next-auth/react";
@@ -13,11 +13,12 @@ interface Props {
   selectedChatId: number | null;
 }
 
-const ChatContainer: React.FC<Props> = ({ selectedChatId}) => {
+const ChatContainer: React.FC<Props> = ({ selectedChatId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessageText, setNewMessageText] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
-  const { data: session} = useSession();
+  const { data: session } = useSession();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -30,7 +31,6 @@ const ChatContainer: React.FC<Props> = ({ selectedChatId}) => {
             },
             body: JSON.stringify({ conversationId: selectedChatId }),
           });
-
           if (response.ok) {
             const data: Message[] = await response.json();
             setMessages(data);
@@ -40,7 +40,7 @@ const ChatContainer: React.FC<Props> = ({ selectedChatId}) => {
             setLoading(false);
           }
         } else {
-          setMessages([]); 
+          setMessages([]);
           setLoading(false);
         }
       } catch (error) {
@@ -48,46 +48,35 @@ const ChatContainer: React.FC<Props> = ({ selectedChatId}) => {
         setLoading(false);
       }
     };
-
     fetchMessages();
   }, [selectedChatId]);
 
   useEffect(() => {
-    if (selectedChatId === null) {
-      setMessages([]);
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [selectedChatId]);
+  };
 
   const sendMessage = async () => {
     try {
       if (!newMessageText.trim() || !selectedChatId) return;
-
-      const userMessageResponse = await fetch(`/api/messages`, {
+  
+      const response = await fetch(`/api/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ conversationId: selectedChatId, content: newMessageText , sender : "User"}),
+        body: JSON.stringify({ conversationId: selectedChatId, content: newMessageText }),
       });
-
-      if (userMessageResponse.ok) {
-        const userMessage: Message = await userMessageResponse.json();
-
-        const botResponse = await fetch('/api/messages', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userMessage: newMessageText }),
-        });
-
-        if (botResponse.ok) {
-          const botMessage: Message = await botResponse.json();
-          setMessages(prevMessages => [...prevMessages, userMessage, botMessage]);
-          setNewMessageText('');
-        } else {
-          console.error('Failed to get bot response');
-        }
+  
+      if (response.ok) {
+        const { prompt, message } = await response.json();
+        setMessages(prevMessages => [...prevMessages, prompt, message]);
+        setNewMessageText('');
       } else {
         console.error('Failed to send user message');
       }
@@ -95,12 +84,7 @@ const ChatContainer: React.FC<Props> = ({ selectedChatId}) => {
       console.error('Error sending message:', error);
     }
   };
-
-  useEffect(() => {
-    if (selectedChatId === null) {
-      setMessages([]);
-    }
-  }, [selectedChatId]);
+  
 
   return (
     <main className="flex-1 bg-gray-200 dark:bg-gray-800 p-4">
@@ -122,6 +106,7 @@ const ChatContainer: React.FC<Props> = ({ selectedChatId}) => {
                 </div>
               ))
             )}
+            <div ref={messagesEndRef} />
           </div>
         )}
       </div>
@@ -141,7 +126,7 @@ const ChatContainer: React.FC<Props> = ({ selectedChatId}) => {
               backgroundColor: '#FFFFFF',
               color: '#333333',
               height: '50px',
-              borderColor: '#555555' 
+              borderColor: '#555555'
             }}
             InputProps={{
               style: { borderRadius: '4px', height: '100%' }
@@ -149,13 +134,11 @@ const ChatContainer: React.FC<Props> = ({ selectedChatId}) => {
           />
           <button
             type="submit"
-            className="flex justify-center items-center bg-gray-400 dark:bg-gray-700 p-2 rounded-md cursor-pointer mt-2 ext-lg font-semibold flex items-center"
+            className="flex justify-center items-center bg-gray-100 dark:bg-gray-700 p-2 rounded-md cursor-pointer mt-2 ext-lg font-semibold flex items-center"
             style={{
-              height: '50px',
-              opacity: newMessageText.trim() ? 1 : 0.5, // Set opacity based on newMessageText
-              pointerEvents: newMessageText.trim() ? 'auto' : 'none' // Enable/disable pointer events based on newMessageText
+              height: '50px'
             }}
-            disabled={!newMessageText.trim()} // Disable button if newMessageText is empty or only whitespace
+            disabled={!newMessageText.trim()} 
           >
             Send
           </button>

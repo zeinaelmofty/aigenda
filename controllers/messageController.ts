@@ -3,9 +3,11 @@ import { messageService } from '../services/messageService';
 
 export async function createMessage(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { conversationId, content , sender } = req.body;
-    const message = await messageService.createMessage(conversationId, content , sender);
-    res.status(201).json(message);
+    const { conversationId, content} = req.body;
+    const responseContent = await generateResponse(content);
+    const prompt = await messageService.createMessage(conversationId, content, "User");
+    const message = await messageService.createMessage(conversationId, responseContent, "Bot");
+    res.status(201).json({ prompt, message });
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
@@ -25,13 +27,12 @@ export async function getMessages(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export async function query(req: NextApiRequest, res: NextApiResponse) {
+ async function generateResponse(userMessage: string): Promise<string> {
   try {
-    const { userMessage } = req.body;
     const content = await messageService.getResponse(userMessage);
-    res.status(200).json({ content });
+    return content;
   } catch (error) {
     console.error('Error getting response:', error);
-    res.status(500).json({ error: 'Failed to get response' });
+    throw new Error('Failed to get response');
   }
 }
