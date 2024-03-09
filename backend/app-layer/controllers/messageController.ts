@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { messageService } from '../services/messageService';
 
 import { Message as VercelChatMessage, StreamingTextResponse } from "ai";
-import { Message } from "../components/ChatContainer";
+import { Message } from "../../../components/ChatContainer";
 import { ChatOpenAI } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { HttpResponseOutputParser } from "langchain/output_parsers";

@@ -4,7 +4,7 @@ import {
   updateConversationTitle,
   deleteConversation,
   createConversation 
-} from '../../controllers/conversationController';
+} from '../../backend/app-layer/controllers/conversationController';
 
 export default async function handler(
   req: NextApiRequest,

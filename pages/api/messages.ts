@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import {
   createMessage,
   getMessages,
-} from '../../controllers/messageController';
+} from '../../backend/app-layer/controllers/messageController';
 
 export default async function handler(
   req: NextApiRequest,
