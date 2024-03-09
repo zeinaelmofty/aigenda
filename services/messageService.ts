@@ -4,13 +4,13 @@ import { Message } from '@prisma/client/wasm';
 const prisma = new PrismaClient();
 
 export const messageService = {
-  async createMessage(conversationId: number, content: string , sender: string): Promise<Message> {
+  async createMessage(conversationId: number, content: string , role: string): Promise<Message> {
     try {
       const message = await prisma.message.create({
         data: {
           conversationId,
           content,
-          sender
+          role
         },
       });
       console.log(message);

@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import {
   createMessage,
   getMessages,
-  query
 } from '../../controllers/messageController';
 
 export default async function handler(
@@ -16,8 +15,6 @@ export default async function handler(
       const { content, question } = req.body;
       if (content) {
         await createMessage(req, res);
-      } else if (question) {
-        await query(req, res);
       } else {
         await getMessages(req, res);
       }

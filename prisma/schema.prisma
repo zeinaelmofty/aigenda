@@ -12,6 +12,7 @@ model Conversation {
   userEmail   String
   title       String       
   createdAt   DateTime     @default(now())
+  messages    Message[]    
 }
 
 model Message {
@@ -19,6 +20,6 @@ model Message {
   conversationId Int
   conversation   Conversation @relation(fields: [conversationId], references: [id])
   content        String
-  sender         String 
+  role           String 
   timestamp      DateTime     @default(now())
 }

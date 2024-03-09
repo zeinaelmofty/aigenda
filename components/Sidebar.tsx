@@ -93,11 +93,13 @@ const Sidebar: React.FC<{ onSelectChat: (chatId: number | null) => void }> = ({ 
         const updatedChats = [...prevChats, newChat];
         updatedChats.sort((a: Conversation, b: Conversation) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         return updatedChats;
-      }); 
+      });
+      handleSelectSidebarChat(newChat.id);
     } catch (error) {
       console.error('Error creating chat:', error);
     }
   };
+  
 
   return (
     <aside className="w-64 bg-white dark:bg-gray-800">
