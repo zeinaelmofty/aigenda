@@ -78,7 +78,6 @@ async function generateResponse(messages: Message[], currentMessageContent: stri
 
     let response = '';
     for await (const chunk of stream) {
-      // Convert ASCII codes to characters
       response += String.fromCharCode(...chunk);
     }
 
