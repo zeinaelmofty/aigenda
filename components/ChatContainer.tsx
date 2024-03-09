@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 
 export interface Message {
   id: number;
-  role: string;
+  sender: string;
   content: string;
 }
 
@@ -103,7 +103,7 @@ const ChatContainer: React.FC<Props> = ({ selectedChatId }) => {
               messages.map((message) => (
                 <div key={message.id} className="bg-gray-100 dark:bg-gray-800 p-2 rounded-md mb-2">
                   <p className="font-semibold">
-                    {message.role === 'User' ? (session && session.user ? session.user.name : 'Anonymous') : 'Bot'}
+                    {message.sender === 'User' ? (session && session.user ? session.user.name : 'Anonymous') : 'AI-Genda Bot'}
                   </p>
                   <p>{message.content}</p>
                 </div>

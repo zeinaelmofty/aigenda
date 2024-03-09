@@ -9,7 +9,7 @@ import { HttpResponseOutputParser } from "langchain/output_parsers";
 export const runtime = "edge";
 
 const formatMessage = (message: Message) => {
-  return `${message.role}: ${message.content}`;
+  return `${message.sender}: ${message.content}`;
 };
 
 const TEMPLATE = `I will ask you questions about event planning. All responses must be related to this context to help me throughout my event planning. If I ask you about anything else please guide me back to the conversation context only.
@@ -30,10 +30,10 @@ export async function createMessage(req: NextApiRequest, res: NextApiResponse) {
     const { conversationId, content, messages } = req.body;
     const responseContent = await generateResponse(messages, content);
     if (typeof responseContent === 'string') {
-      const newMessages = [...messages, { role: "User", content: content }];
+      const newMessages = [...messages, { sender: "User", content: content }];
       const prompt = await messageService.createMessage(conversationId, content, "User");
       const botMessage = await messageService.createMessage(conversationId, responseContent, "assistant");
-      newMessages.push({ role: "assistant", content: responseContent });
+      newMessages.push({ sender: "assistant", content: responseContent });
       res.status(201).json({ prompt, message: botMessage, messages: newMessages });
     } else {
       res.status(500).json({ error: responseContent.error });

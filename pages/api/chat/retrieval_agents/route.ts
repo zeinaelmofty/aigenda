@@ -17,12 +17,12 @@ import {
 export const runtime = "edge";
 
 const convertVercelMessageToLangChainMessage = (message: VercelChatMessage) => {
-  if (message.role === "user") {
+  if (message.sender === "user") {
     return new HumanMessage(message.content);
-  } else if (message.role === "assistant") {
+  } else if (message.sender === "assistant") {
     return new AIMessage(message.content);
   } else {
-    return new ChatMessage(message.content, message.role);
+    return new ChatMessage(message.content, message.sender);
   }
 };
 
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
      */
     const messages = (body.messages ?? []).filter(
       (message: VercelChatMessage) =>
-        message.role === "user" || message.role === "assistant",
+        message.sender === "user" || message.sender === "assistant",
     );
     const returnIntermediateSteps = body.show_intermediate_steps;
     const previousMessages = messages

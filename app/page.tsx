@@ -1,5 +1,5 @@
 import 'tailwindcss/tailwind.css';
-import Chatbot from '../pagess/Chatbot';
+import Chatbot from '../pagesFE/Chatbot';
 
 export default function Home() {
   return (

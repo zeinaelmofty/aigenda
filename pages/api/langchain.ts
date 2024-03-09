@@ -21,7 +21,7 @@
 
 //       const gptResponse = await openaiClient.completions.create({
 //         model: "gpt-4", 
-//         messages: [{ role: 'user', content: message }],
+//         messages: [{ sender: 'user', content: message }],
 //       } as CompletionCreateParamsNonStreaming);
       
 //       const finalBotResponse = gptResponse.choices[0].text;

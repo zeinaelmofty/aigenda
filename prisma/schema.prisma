@@ -20,6 +20,6 @@ model Message {
   conversationId Int
   conversation   Conversation @relation(fields: [conversationId], references: [id])
   content        String
-  role           String 
+  sender           String 
   timestamp      DateTime     @default(now())
 }

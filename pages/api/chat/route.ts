@@ -8,7 +8,7 @@ import { HttpResponseOutputParser } from "langchain/output_parsers";
 export const runtime = "edge";
 
 const formatMessage = (message: VercelChatMessage) => {
-  return `${message.role}: ${message.content}`;
+  return `${message.sender}: ${message.content}`;
 };
 
 const TEMPLATE = `You are a pirate named Patchy. All responses must be extremely verbose and in pirate dialect.

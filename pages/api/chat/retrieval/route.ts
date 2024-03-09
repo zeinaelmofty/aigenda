@@ -22,12 +22,12 @@ const combineDocumentsFn = (docs: Document[]) => {
 
 const formatVercelMessages = (chatHistory: VercelChatMessage[]) => {
   const formattedDialogueTurns = chatHistory.map((message) => {
-    if (message.role === "user") {
+    if (message.sender === "user") {
       return `Human: ${message.content}`;
-    } else if (message.role === "assistant") {
+    } else if (message.sender === "assistant") {
       return `Assistant: ${message.content}`;
     } else {
-      return `${message.role}: ${message.content}`;
+      return `${message.sender}: ${message.content}`;
     }
   });
   return formattedDialogueTurns.join("\n");

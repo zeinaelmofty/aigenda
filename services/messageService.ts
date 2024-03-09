@@ -4,13 +4,13 @@ import { Message } from '@prisma/client/wasm';
 const prisma = new PrismaClient();
 
 export const messageService = {
-  async createMessage(conversationId: number, content: string , role: string): Promise<Message> {
+  async createMessage(conversationId: number, content: string , sender: string): Promise<Message> {
     try {
       const message = await prisma.message.create({
         data: {
-          conversationId,
-          content,
-          role
+          conversationId: conversationId,
+          content: content,
+          sender: sender as any, 
         },
       });
       console.log(message);
@@ -34,9 +34,5 @@ export const messageService = {
     } catch (error) {
       throw new Error('Failed to fetch messages by conversation ID');
     }
-  },
-
-  async getResponse(userMessage: string): Promise<string> {
-    return "Okay, I'll do that";
   },
 };
